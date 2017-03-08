@@ -114,6 +114,11 @@
 #define GPIO_SET(idx)	gpio[GPSET0_OFFSET] |= (1 << idx)
 #define GPIO_CLR(idx)	gpio[GPCLR0_OFFSET] &= (1 << idx)
 
+#define GPIO_READ(idx)	(gpio[GPLEV0_OFFSET] >> idx) & 1
+#define GPIO_SET_RISING_EDGE(idx) gpio[GPREN0_OFFSET] |= (1 << idx)
+#define GPIO_SET_FALLING_EDGE(idx) gpio[GPRFN0_OFFSET] |= (1 << idx)
+//#define GPIO_EVENT
+
 extern void SetActLEDState ( unsigned int );
 
 /* GPIO Register set */
@@ -132,13 +137,17 @@ int main ( void )
 
 	/* Reset GPIO */
 	RESET_GPIO(TARGET_PIN);
-	/* Activate GPIO as OUTPUT */
-	ACT_GPIO(TARGET_PIN);
 
-	/* Turn on LED */
-	SetActLEDState(TRUE);
-	/* Set HIGH to GPIO */
-	GPIO_SET(TARGET_PIN);
+	/* polling */
+	if(GPIO_READ(TARGET_PIN)) {
+		// high
+	} else {
+		// low
+	}
+
+	/* call-back */
+	//GPIO_SET_RISING_EDGE(TARGET_PIN);
+
 
     while(TRUE)
     {
