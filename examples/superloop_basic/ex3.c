@@ -16,6 +16,9 @@ volatile unsigned int* gpio;
 
 #define TARGET_PIN		13
 
+#define	TRUE	1
+#define	FALSE	0
+
 int main ( void )
 {
 	unsigned int ra;
@@ -27,17 +30,17 @@ int main ( void )
 	/* Activate GPIO as OUTPUT */
 	ACT_GPIO(TARGET_PIN);
 
-    while(1)
+    while(TRUE)
     {
 		/* Turn on LED */
-		SetActLEDState(1);
+		SetActLEDState(TRUE);
 		/* Set HIGH to GPIO */
 		GPIO_SET(TARGET_PIN);
 		/* Delay */
         for(ra=1000000;ra>0;ra--);
 
 		/* Turn off LED */
-        SetActLEDState(0);
+        SetActLEDState(FALSE);
 		/* Set LOW to GPIO */
 		GPIO_CLR(TARGET_PIN);
 		/* Delay */
