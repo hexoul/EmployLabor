@@ -60,13 +60,13 @@
  */
 #define GPHEN0_OFFSET	0x19	/* GPIO Pin High Detect Enable 0 */
 /* High Detect Status Register
- * When pin still high upon clear attempt, clear signal is ignored, status will remain set.
+ * When pin still high upon GPEDSn clear attempt, status will remain set.
  * 0	Disabled
  * 1	Enabled
  */
 #define GPLEN0_OFFSET	0x1c	/* GPIO Pin Low Detect Enable 0 */
 /* Low Detect Status Register
- * When pin still low upon clear attempt, clear signal is ignored, status will remain set.
+ * When pin still low upon GPEDSn clear attempt, status will remain set.
  * 0	Disabled
  * 1	Enabled
  */
@@ -114,9 +114,18 @@
 #define GPIO_SET(idx)	gpio[GPSET0_OFFSET] |= (1 << idx)
 #define GPIO_CLR(idx)	gpio[GPCLR0_OFFSET] &= (1 << idx)
 
-#define GPIO_READ(idx)	(gpio[GPLEV0_OFFSET] >> idx) & 1
-#define GPIO_SET_RISING_EDGE(idx) gpio[GPREN0_OFFSET] |= (1 << idx)
-#define GPIO_SET_FALLING_EDGE(idx) gpio[GPRFN0_OFFSET] |= (1 << idx)
+
+//#define GPIO_READ(idx)	(gpio[GPLEV0_OFFSET] >> idx) & 1
+#define GPIO_EVENT_READ(idx)	(gpio[GPEDS0_OFFSET] >> idx) & 1
+#define GPIO_EVENT_CLEAR(idx)	gpio[GPEDS0_OFFSET] |= (1 << idx)
+
+#define GPIO_SET_RISING_EDGE_ENABLE(idx) gpio[GPREN0_OFFSET] |= (1 << idx)
+#define GPIO_SET_RISING_EDGE_DISABLE(idx) gpio[GPREN0_OFFSET] &= ~(1 << idx)
+#define GPIO_SET_FALLING_EDGE_ENABLE(idx) gpio[GPFEN0_OFFSET] |= (1 << idx)
+#define GPIO_SET_FALLING_EDGE_DISABLE(idx) gpio[GPFEN0_OFFSET] &= ~(1 << idx)
+#define GPIO_SET_HIGH_DETECT(idx) gpio[GPHEN0_OFFSET] |= (1 << idx)
+#define GPIO_SET_LOW_DETECT(idx) gpio[GPLEN0_OFFSET] |= (1 << idx)
+
 //#define GPIO_EVENT
 
 extern void SetActLEDState ( unsigned int );
@@ -124,7 +133,8 @@ extern void SetActLEDState ( unsigned int );
 /* GPIO Register set */
 volatile unsigned int* gpio;
 
-#define TARGET_PIN		13
+#define PIN_IN		5
+#define PIN_OUT		13
 
 #define TRUE	1
 #define	FALSE	0
@@ -136,22 +146,58 @@ int main ( void )
     gpio = (unsigned int*)GPIO_BASE;
 
 	/* Reset GPIO */
-	RESET_GPIO(TARGET_PIN);
+	RESET_GPIO(PIN_IN);
+	RESET_GPIO(PIN_OUT);
+	ACT_GPIO(PIN_OUT);
 
-	/* polling */
-	if(GPIO_READ(TARGET_PIN)) {
-		// high
-	} else {
-		// low
-	}
-
-	/* call-back */
-	//GPIO_SET_RISING_EDGE(TARGET_PIN);
-
+	GPIO_SET_FALLING_EDGE_DISABLE(PIN_IN);
 
     while(TRUE)
     {
-	
+   		GPIO_SET_RISING_EDGE_ENABLE(PIN_IN);
+		while(TRUE)   
+		{
+			if(GPIO_EVENT_READ(PIN_IN)) {
+				GPIO_EVENT_CLEAR(PIN_IN);
+				break;
+			}
+		}	
+		GPIO_SET_RISING_EDGE_DISABLE(PIN_IN);
+		
+		GPIO_SET_FALLING_EDGE_ENABLE(PIN_IN);
+		while(TRUE)   
+		{
+			if(GPIO_EVENT_READ(PIN_IN)) {
+				GPIO_EVENT_CLEAR(PIN_IN);
+				break;
+			}
+		}				
+		GPIO_SET_FALLING_EDGE_DISABLE(PIN_IN);
+		
+
+		GPIO_SET(PIN_OUT);	
+
+   		GPIO_SET_RISING_EDGE_ENABLE(PIN_IN);
+		while(TRUE)   
+		{
+			if(GPIO_EVENT_READ(PIN_IN)) {
+				GPIO_EVENT_CLEAR(PIN_IN);
+				break;
+			}
+		}	
+		GPIO_SET_RISING_EDGE_DISABLE(PIN_IN);
+
+		GPIO_SET_FALLING_EDGE_ENABLE(PIN_IN);
+		while(TRUE)   
+		{
+			if(GPIO_EVENT_READ(PIN_IN)) {
+				GPIO_EVENT_CLEAR(PIN_IN);
+				break;
+			}
+		}				
+		GPIO_SET_FALLING_EDGE_DISABLE(PIN_IN);
+
+		GPIO_CLR(PIN_OUT);		
     }
 
     return (0);

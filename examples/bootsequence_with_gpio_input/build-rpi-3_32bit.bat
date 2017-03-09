@@ -1,5 +1,5 @@
 set target=ex2
-set cc=arm-none-eabi
+set cc=c:\GNU\v47\bin\arm-none-eabi
 
 %cc%-as start.s mailbox.s led.s -o start.o
 
