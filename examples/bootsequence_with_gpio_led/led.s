@@ -33,8 +33,8 @@ PropertyInfoEnd:
 @;
 @; Rust Signature: fn SetActLEDState(state: u32)
 .section .text
-.global SetActLEDState
-SetActLEDState:
+.global setActLEDState
+setActLEDState:
   push {lr} @; Save the point the function should return to
   state .req r2
   mov state, r0 @; Move the state into temporary register

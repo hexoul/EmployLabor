@@ -9,7 +9,7 @@
 #define GPIO_SET(idx)	gpio[GPSET0_OFFSET] |= (1 << idx)
 #define GPIO_CLR(idx)	gpio[GPCLR0_OFFSET] &= (1 << idx)
 
-extern void SetActLEDState ( unsigned int );
+extern void setActLEDState ( unsigned int );
 
 /* GPIO Register set */
 volatile unsigned int* gpio;
@@ -31,7 +31,7 @@ int main ( void )
 	ACT_GPIO(TARGET_PIN);
 
 	/* Turn on LED */
-	SetActLEDState(TRUE);
+	setActLEDState(TRUE);
 	/* Set HIGH to GPIO */
 	GPIO_SET(TARGET_PIN);
 
