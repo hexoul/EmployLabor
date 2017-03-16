@@ -1,5 +1,5 @@
-set target=ex4
 set cc=arm-none-eabi
+set target=ex7
 
 %cc%-as start.s mailbox.s led.s -o start.o
 
