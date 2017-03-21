@@ -129,28 +129,28 @@
 /* GPIO Register set */
 volatile unsigned int* gpio;
 
-#define PIN_IN		5
-#define PIN_OUT		13
+#define PIN_IN		14	
+#define PIN_OUT		6	
 
 #define TRUE	1
 #define	FALSE	0
 
-int read_gpio_event(int PIN_IN)
+int read_gpio_event(int idx)
 {
 	int ret = 0;
-	if (GPIO_EVENT_READ(PIN_IN))
+	if (GPIO_EVENT_READ(idx))
 	{
-		if (GPIO_RISINGEDGE_EVENT_READ(PIN_IN))
+		if (GPIO_RISING_EDGE_EVENT_READ(idx))
 		{
-			GPIO_EVENT_CLEAR(PIN_IN);
-			GPIO_SET_RISING_EDGE_DISABLE(PIN_IN);
-			GPIO_SET_FALLING_EDGE_ENABLE(PIN_IN);
+			GPIO_EVENT_CLEAR(idx);
+			GPIO_SET_RISING_EDGE_DISABLE(idx);
+			GPIO_SET_FALLING_EDGE_ENABLE(idx);
 		}
-		else if (GPIO_FALLINGEDGE_EVENT_READ(PIN_IN))
+		else if (GPIO_FALLING_EDGE_EVENT_READ(idx))
 		{
-			GPIO_EVENT_CLEAR(PIN_IN);
-			GPIO_SET_FALLING_EDGE_DISABLE(PIN_IN);
-			GPIO_SET_RISING_EDGE_ENABLE(PIN_IN);
+			GPIO_EVENT_CLEAR(idx);
+			GPIO_SET_FALLING_EDGE_DISABLE(idx);
+			GPIO_SET_RISING_EDGE_ENABLE(idx);
 			ret = 1;
 		}
 	}
@@ -158,7 +158,7 @@ int read_gpio_event(int PIN_IN)
 }
 
 
-int _start ( void )
+int main ( void )
 {
 	/* Assign the address of the GPIO peripheral (Using ARM Physical Address) */
 	gpio = (unsigned int*)GPIO_BASE;
@@ -170,6 +170,7 @@ int _start ( void )
 
 	GPIO_SET_RISING_EDGE_ENABLE(PIN_IN);
 	GPIO_SET_FALLING_EDGE_DISABLE(PIN_IN);
+
 
 	int count = 0;
 	
